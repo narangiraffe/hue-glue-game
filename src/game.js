@@ -1,1 +1,1 @@
-
+document.body.textContent = "Hue Glue Game";
