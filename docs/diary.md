@@ -1,3 +1,14 @@
+# 09.09.2025
+After the first attempt to write code for the first PoC using AI, it was decided to rewrite the code independently. The blocks proposed by the text model, although functional, were very difficult to read and overloaded.
+
+In combination with related changes, the main points of the latest commit can be highlighted:
+1. The Color class was created for color operations.
+2. The Cell class was created for cell operations.
+3. The color.js utility file was significantly reworked.
+4. Abstract mathematical functions were moved to a separate math.js file.
+
+At the moment, the concept of “coloring the grid” has been implemented in the project.
+
 # 07.09.2025
 React+Vite is deployed on the project.
 
