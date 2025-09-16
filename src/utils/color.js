@@ -41,10 +41,6 @@ class Color {
         )
     }
 
-    static isDistanceAcceptable(distance, minDistance) {
-        return distance >= minDistance
-    } 
-
     static lerp(colorL, colorR, interpolant) {
         return new Color(
             lerpMath(colorL.r, colorR.r, interpolant),
@@ -69,23 +65,20 @@ class Color {
 }
 
 function makeListOfAnchorCells(rows, cols) {
-    let anchors = []
-    anchors.push(new Cell(0, 0, true))
-    anchors.push(new Cell(cols - 1, 0, true))
-    anchors.push(new Cell(0, rows - 1, true))
-    anchors.push(new Cell(cols - 1, rows - 1, true))
-    
-    return  anchors
+    return [
+        new Cell(0, 0, true),
+        new Cell(cols - 1, 0, true),
+        new Cell(0, rows - 1, true),
+        new Cell(cols - 1, rows - 1, true),
+    ]
 }
 
 function makeListOfAnchorColors(anchorCount, minDistance) {
-    let colors = []
-    colors[0] = Color.random()
+    let colors = [Color.random()]
 
-    let randomColor = null
     while (colors.length < anchorCount) {
-        randomColor = Color.random()
-        if (colors.every(c => Color.isDistanceAcceptable(Color.distance(c, randomColor), minDistance))) {
+        const randomColor = Color.random()
+        if (colors.every(c => Color.distance(c, randomColor) >= minDistance)) {
             colors.push(randomColor)
         }
     }
@@ -107,15 +100,11 @@ function colorRest(grid, anchors) {
 
     const [topleft, topright, bottomleft, bottomright] = anchors
 
-    //denominators for interpolation
-    const denomX = cols > 1 ? cols - 1 : 1
-    const denomY = rows > 1 ? rows - 1 : 1
-
     for (let i = 0; i < rows; i++) {
         for (let j = 0; j < cols; j++) {
             if (grid[i][j] === null) {
-                const tx = cols > 1 ? j / denomX : 0
-                const ty = rows > 1 ? i / denomY : 0
+                const tx = cols > 1 ? j / (cols - 1) : 0
+                const ty = rows > 1 ? i / (rows - 1) : 0
                 grid[i][j] = Color.bilerp(topleft.color, topright.color, bottomleft.color, bottomright.color, tx, ty)
             }
         }
