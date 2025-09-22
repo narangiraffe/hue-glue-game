@@ -1,7 +1,6 @@
 # Hue Glue Game
 
-**Hue Glue** is a fast-paced local multiplayer party game about colors.  
-Players mix and match hues on a shared canvas, trying to outsmart each other and take control of the board.
+**Hue Glue** Browser puzzle-game in which the player uses the mouse to interact with a grid in order to arrange the mixed-up cells by color. Recreate harmony in the color grid by hue.
 
 ---
 
