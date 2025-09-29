@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 import Grid from "./components/Grid"
 import { generateGrid } from "./utils/color"
 
@@ -6,7 +6,7 @@ function App() {
   const [cells, setCells] = useState([])
 
   useEffect(() => {
-    const initialGrid = generateGrid(5, 5)
+    const initialGrid = generateGrid(7, 7)
     setCells(initialGrid)
   }, [])
 

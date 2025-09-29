@@ -1,4 +1,4 @@
-import Cell from "./cell.js"
+import Grid from "./grid.js"
 import { randomByte, lerp as lerpMath } from "./math.js"
 
 class Color {
@@ -9,11 +9,9 @@ class Color {
     }
 
     _a = 1.0
-
     get a() {
         return this._a
     }
-
     set a(value) {
         if (value < 0 || value > 1) {
             throw new Error("Alpha value must be between 0 and 1")
@@ -22,7 +20,7 @@ class Color {
     }
     
     get rgb() {
-        return `rgb(${this.r}, ${this.g}, ${this.b})`
+        return `rgb(${this.r} ${this.g} ${this.b})`
     }
 
     get rgba() {
@@ -30,7 +28,7 @@ class Color {
     }
 
     distanceTo(otherColor) {
-        return distance(this, otherColor)
+        return Color.distance(this, otherColor)
     }
 
     static distance(colorA, colorB) {
@@ -64,15 +62,6 @@ class Color {
     }
 }
 
-function makeListOfAnchorCells(rows, cols) {
-    return [
-        new Cell(0, 0, true),
-        new Cell(cols - 1, 0, true),
-        new Cell(0, rows - 1, true),
-        new Cell(cols - 1, rows - 1, true),
-    ]
-}
-
 function makeListOfAnchorColors(anchorCount, minDistance) {
     let colors = [Color.random()]
 
@@ -86,7 +75,7 @@ function makeListOfAnchorColors(anchorCount, minDistance) {
     return colors
 }
 
-function fillAnchorsWithColors(anchors, minDistance){
+function colorAnchors(anchors, minDistance){
     let anchorColors = makeListOfAnchorColors(anchors.length, minDistance)
     for (const anchor of anchors) {
         anchor.color = anchorColors.pop()
@@ -98,13 +87,13 @@ function colorRest(grid, anchors) {
     const rows = grid.length
     const cols = grid[0].length
 
-    const [topleft, topright, bottomleft, bottomright] = anchors
+    const [topleft, bottomleft, topright, bottomright] = anchors
 
     for (let i = 0; i < rows; i++) {
         for (let j = 0; j < cols; j++) {
             if (grid[i][j] === null) {
-                const tx = cols > 1 ? j / (cols - 1) : 0
-                const ty = rows > 1 ? i / (rows - 1) : 0
+                const tx = j / (cols - 1)
+                const ty = i / (rows - 1)
                 grid[i][j] = Color.bilerp(topleft.color, topright.color, bottomleft.color, bottomright.color, tx, ty)
             }
         }
@@ -119,14 +108,14 @@ export function generateGrid(rows, cols) {
         throw new Error(`generateGrid: invalid dimensions rows=${rows}, cols=${cols}`)
     }
 
-    const grid = Array.from({ length: rows }, () => Array(cols).fill(null))
+    const grid = new Grid(rows, cols)
 
-    let anchors = fillAnchorsWithColors(makeListOfAnchorCells(rows, cols), 100)
+    let coloredAnchors = colorAnchors(grid.anchors, 100)
         
-    for (const a of anchors) {
-        grid[a.y][a.x] = a.color
+    for (const a of coloredAnchors) {
+        grid.cells[a.y][a.x] = a.color
     }
 
     //fill in the rest of the grid
-    return colorRest(grid, anchors)
+    return colorRest(grid.cells, coloredAnchors)
 }
